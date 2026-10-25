@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApiarySMP — Панель управления</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0b0a08;
+            --bg-surface: #14120e;
+            --bg-card: #1c1813;
+            --border: rgba(220, 160, 50, 0.22);
+            --border-focus: #f2a829;
+            --honey: #f2a829;
+            --honey-dark: #d48b11;
+            --txt-main: #f5f3ef;
+            --txt-muted: #aca396;
+            --txt-subtle: #6e6659;
+            --green: #2ecc71;
+            --red: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--txt-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .admin-wrap {
+            width: 100%;
+            max-width: 620px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 26px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 18px;
+        }
+
+        .admin-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--honey);
+            background: rgba(242, 168, 41, 0.12);
+            border: 1px solid rgba(242, 168, 41, 0.3);
+            padding: 4px 10px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        .admin-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--txt-subtle);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .admin-input, .admin-select {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--txt-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .admin-input:focus, .admin-select:focus {
+            border-color: var(--border-focus);
+        }
+
+        .admin-select option {
+            background: #1c1813;
+            color: #ffffff;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--honey), var(--honey-dark));
+            color: #120e08;
+            border: none;
+            border-radius: 30px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 0 6px 16px rgba(242, 168, 41, 0.25);
+        }
+
+        .btn-action:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(242, 168, 41, 0.35);
+        }
+
+        .btn-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            margin: 22px 0;
+            border-top: 1px dashed var(--border);
+            text-align: center;
+            position: relative;
+        }
+
+        .divider span {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-surface);
+            padding: 0 10px;
+            font-size: 0.72rem;
+            color: var(--txt-subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .console-output {
+            margin-top: 18px;
+            background: #070605;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #92d68a;
+            max-height: 160px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            display: none;
+        }
+
+        .status-msg {
+            margin-top: 12px;
+            font-size: 0.86rem;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+        }
+
+        .status-success { color: var(--green); }
+        .status-error { color: var(--red); }
+    </style>
+</head>
+<body>
+
+    <div class="admin-wrap">
+        <header class="admin-header">
+            <span class="admin-badge">ApiarySMP Internal</span>
+            <h1 class="admin-title">Панель управления</h1>
+        </header>
+
+        <!-- АВТОРИЗАЦИЯ ПО ПАРОЛЮ -->
+        <div class="form-group">
+            <label for="adminPass">Мастер-пароль администратора</label>
+            <input type="password" id="adminPass" class="admin-input" placeholder="Введи секретный ключ...">
+        </div>
+
+        <!-- ВЫДАЧА ИЗ КАТАЛОГА БЕЗ ОПЛАТЫ -->
+        <div class="form-group">
+            <label for="playerNick">Игровой никнейм</label>
+            <input type="text" id="playerNick" class="admin-input" placeholder="Например: Notch" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label for="productSelect">Выбрать позицию для начисления</label>
+            <select id="productSelect" class="admin-select">
+                <option value="pass">⭐ Проходка на сервер (Вайтлист)</option>
+                <option value="bee">🐝 Спутники: Базовый набор (Пчёлка, Эллей, Слайм, Гаст, Эндермен)</option>
+                <option value="pets_addon">🦇 Спутники: Тёмный пак (Векс, Мышь, Варден)</option>
+                <option value="scale">🍯 Рост в 1 блок</option>
+                <option value="spawn">✨ Эффект появления при входе</option>
+                <option value="elytra">🪽 Шлейф от элитр</option>
+                <option value="trails">🐾 Эффекты поступи (Трейлы)</option>
+                <option value="basesign">🪵 3D-вывеска для базы</option>
+                <option value="doorbell">🔔 Дверной звонок у дома</option>
+                <option value="lore">🏷️ Кастомизатор предметов (/lore, /rename)</option>
+                <option value="popper">🎉 Праздничная хлопушка</option>
+                <option value="sponsor">👑 Спонсор улья</option>
+                <option value="prefix">💬 Кастомный префикс</option>
+            </select>
+        </div>
+
+        <button type="button" id="grantBtn" class="btn-action" onclick="grantProduct()">
+            Выдать товар игроку
+        </button>
+
+        <div class="divider"><span>ИЛИ RCON-КОМАНДА</span></div>
+
+        <!-- ПРОИЗВОЛЬНАЯ КОМАНДА В СЕРВЕР -->
+        <div class="form-group">
+            <label for="rawCmd">Прямая команда в консоль сервера</label>
+            <input type="text" id="rawCmd" class="admin-input" placeholder="Например: swl remove Notch или kick Player">
+        </div>
+
+        <button type="button" id="cmdBtn" class="btn-action" style="background: #2a251e; color: #fff; border: 1px solid var(--border);" onclick="sendRawCommand()">
+            Отправить команду
+        </button>
+
+        <div id="statusMsg" class="status-msg"></div>
+        <div id="consoleLog" class="console-output"></div>
+    </div>
+
+    <script>
+        const API_URL = "https://pay.apiarysmp.online/admin/grant";
+
+        // Восстановление пароля из сессии
+        document.addEventListener('DOMContentLoaded', () => {
+            const saved = sessionStorage.getItem('apiary_adm_key');
+            if (saved) {
+                document.getElementById('adminPass').value = saved;
+            }
+        });
+
+        function getPassword() {
+            const pass = document.getElementById('adminPass').value.trim();
+            if (pass) {
+                sessionStorage.setItem('apiary_adm_key', pass);
+            }
+            return pass;
+        }
+
+        function showStatus(text, isError = false) {
+            const el = document.getElementById('statusMsg');
+            el.textContent = text;
+            el.className = 'status-msg ' + (isError ? 'status-error' : 'status-success');
+            el.style.display = 'block';
+        }
+
+        function showLog(lines) {
+            const el = document.getElementById('consoleLog');
+            if (!lines || lines.length === 0) return;
+            el.textContent = lines.join('\n');
+            el.style.display = 'block';
+        }
+
+        async function grantProduct() {
+            const password = getPassword();
+            const nickname = document.getElementById('playerNick').value.trim();
+            const type = document.getElementById('productSelect').value;
+            const btn = document.getElementById('grantBtn');
+
+            if (!password) {
+                showStatus("Введите мастер-пароль администратора!", true);
+                return;
+            }
+            if (!nickname) {
+                showStatus("Укажите никнейм игрока!", true);
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Начисление...";
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, nickname, type })
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    showStatus(`Позиция «${type}» успешно выдана игроку ${nickname}!`);
+                    showLog(data.log);
+                } else {
+                    showStatus(data.error || "Ошибка выдачи", true);
+                    if (data.log) showLog(data.log);
+                }
+            } catch (err) {
+                showStatus("Ошибка подключения к серверу бэкенда", true);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Выдать товар игроку";
+            }
+        }
+
+        async function sendRawCommand() {
+            const password = getPassword();
+            const command = document.getElementById('rawCmd').value.trim();
+            const btn = document.getElementById('cmdBtn');
+
+            if (!password) {
+                showStatus("Введите мастер-пароль администратора!", true);
+                return;
+            }
+            if (!command) {
+                showStatus("Введите команду для отправки!", true);
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Выполнение...";
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, command })
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    showStatus("Команда выполнена консолью сервера!");
+                    showLog(data.log);
+                    document.getElementById('rawCmd').value = '';
+                } else {
+                    showStatus(data.error || "Ошибка выполнения команды", true);
+                    if (data.log) showLog(data.log);
+                }
+            } catch (err) {
+                showStatus("Ошибка подключения к серверу бэкенда", true);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Отправить команду";
+            }
+        }
+    </script>
+</body>
+</html>
